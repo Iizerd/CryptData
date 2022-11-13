@@ -67,21 +67,21 @@ __forceinline Data_type __CD_Encrypt(Data_type Data)
 
 
 // Define the data
-#define CD_DEFINE(__Type, __Name)																																																\
-static_assert(sizeof(__Type) <= 8, "Invalid type size.\n");																																										\
-__Type __EXPAND(__CD_NAME_PREFIX)##__Name;																																														\
-constexpr static __CD_U32 __EXPAND(__CD_NAME_PREFIX)##__Name##_seed = 1776 + __LINE__ + __TIME__[7];																															\
-__forceinline const __Type Get##__Name() const																																													\
-{																																																								\
-	return __CD_Decrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(__EXPAND(__CD_NAME_PREFIX)##__Name##_seed)>(__EXPAND(__CD_NAME_PREFIX)##__Name);																			\
-}																																																								\
-__forceinline void Set##__Name(__Type const __Val)																																												\
-{																																																								\
-	__EXPAND(__CD_NAME_PREFIX)##__Name = __CD_Encrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(__EXPAND(__CD_NAME_PREFIX)##__Name##_seed)>(__Val);																			\
+#define CD_DEFINE(__Type, __Name)																																									\
+static_assert(sizeof(__Type) <= 8, "Invalid type size.");																																			\
+__Type __Cd_name_prefix_##__Name;																																									\
+constexpr static __CD_U32 __Cd_name_prefix_##__Name##_seed = 1776 + __LINE__ + __TIME__[7] + __TIME__[6] + __TIME__[4];																				\
+__forceinline const __Type Get##__Name() const																																						\
+{																																																	\
+	return __CD_Decrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(__Cd_name_prefix_##__Name##_seed)>(__Cd_name_prefix_##__Name);																	\
+}																																																	\
+__forceinline void Set##__Name(__Type const __Val)																																					\
+{																																																	\
+	__Cd_name_prefix_##__Name = __CD_Encrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(__Cd_name_prefix_##__Name##_seed)>(__Val);																\
 }
 
-#define CD_MAKE_INITIALIZER(__Name, __Val)																																														\
-__EXPAND(__CD_NAME_PREFIX)##__Name(__CD_Encrypt<decltype(__EXPAND(__CD_NAME_PREFIX)##__Name), sizeof(decltype(__EXPAND(__CD_NAME_PREFIX)##__Name)), __CD_Hash64<#__Name>(__EXPAND(__CD_NAME_PREFIX)##__Name##_seed)>(__Val))
+#define CD_MAKE_INITIALIZER(__Name, __Val)																																							\
+__Cd_name_prefix_##__Name(__CD_Encrypt<decltype(__Cd_name_prefix_##__Name), sizeof(decltype(__Cd_name_prefix_##__Name)), __CD_Hash64<#__Name>(__Cd_name_prefix_##__Name##_seed)>(__Val))
 
 
 
