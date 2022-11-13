@@ -73,7 +73,7 @@ __forceinline DataType __CD_Encrypt(DataType Data)
 #define CD_DEFINE(__Type, __Name)																									\
 static_assert(sizeof(__Type) <= 8, "Invalid type size.\n");																			\
 __Type __EXPAND(__CD_NAME_PREFIX)##__Name;																							\
-__forceinline const __Type Get##__Name()																							\
+__forceinline const __Type Get##__Name() const																						\
 {																																	\
 	return __CD_Decrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(1776)>(__EXPAND(__CD_NAME_PREFIX)##__Name);					\
 }																																	\
