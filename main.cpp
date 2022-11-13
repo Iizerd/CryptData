@@ -5,17 +5,14 @@
 
 struct TEST_STRUCT
 {
-	
 	CD_DEFINE(float, Temp);
-
+	
 	void* temp2;
 	
 	TEST_STRUCT(float startval)
 		: CD_MAKE_INITIALIZER(Temp, startval)
 		, temp2(NULL)
-	{
-
-	}
+	{ }
 };
 
 int main()
