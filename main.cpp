@@ -5,11 +5,11 @@
 
 struct TEST_STRUCT
 {
-	CD_DEFINE(float, Temp);
+	CD_DEFINE(unsigned long long, Temp);
 	
 	void* temp2;
 	
-	TEST_STRUCT(float startval)
+	TEST_STRUCT(unsigned long long startval)
 		: CD_MAKE_INITIALIZER(Temp, startval)
 		, temp2(NULL)
 	{ }
@@ -17,18 +17,12 @@ struct TEST_STRUCT
 
 int main()
 {
-	//__CD_DATA_STORAGE<8>::Type T = 1776;
-
-	//auto meme = return1776<8>();
-
-	auto Ts = new TEST_STRUCT(1.2);
-
-	//TEST_STRUCT Ts;
-	//Ts->SetTemp(1.234F);
-
-	//unsigned long long test = 0x1776;
-	printf("Temp: %.3f\n", Ts->GetTemp());
-	printf("Temp: %.3f\n", Ts->__Cd_name_prefix_Temp);
+	auto Ts = new TEST_STRUCT(0xFFABCDEF);
+	printf("Temp: %p\n", Ts->GetTemp());
+	printf("Temp: %p\n", Ts->__Cd_np_Temp);
+	Ts->SetTemp(0xFFAAFFAAFFAAFFAA);
+	printf("Temp: %p\n", Ts->GetTemp());
+	printf("Temp: %p\n", Ts->__Cd_np_Temp);
 
 
 	///*unsigned long long test = 0x1776;
@@ -38,4 +32,5 @@ int main()
 	//printf("Test: %p\n", test);*/
 
 	printf("Hash64: %p\n", __CD_Hash64<"Hello">(1776));
+
 }
