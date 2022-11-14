@@ -14,10 +14,11 @@
 
 struct TEST_STRUCT
 {
-	CD_DEFINE(double, Temp);
-
-	TEST_STRUCT(double startval)
-		: CD_INIT(Temp, startval)
+	CD_DEFINE(double, TempDouble);
+	CD_DEFINE(unsigned long long, TempUll)
+	TEST_STRUCT(double startd, unsigned long long startull)
+		: CD_INIT(TempDouble, startd)
+		, CD_INIT(TempUll, startull)
 	{ }
 };
 
@@ -47,11 +48,17 @@ int main()
 	//printf("crypted: %p\n", Ts->__Cd_np_Temp);
 
 
-	auto Ts = new TEST_STRUCT(1.2);
-	printf("Temp:    %.3f\n", Ts->GetTemp());
-	printf("crypted: %.3f\n", Ts->__Cd_np_Temp);
-	Ts->SetTemp(1.52312);
-	printf("Temp:    %.3f\n", Ts->GetTemp());
-	printf("crypted: %.3f\n", Ts->__Cd_np_Temp);
+	auto Ts = new TEST_STRUCT(1.2, 1776);
+	printf("Temp:    %.3f\n", Ts->GetTempDouble());
+	printf("crypted: %.3f\n", Ts->__Cd_np_TempDouble);
+	Ts->SetTempDouble(1.52312);
+	printf("Temp:    %.3f\n", Ts->GetTempDouble());
+	printf("crypted: %.3f\n\n", Ts->__Cd_np_TempDouble);
+
+	printf("Temp:    %llu\n", Ts->GetTempUll());
+	printf("crypted: %llu\n", Ts->__Cd_np_TempUll);
+	Ts->SetTempUll(1992);
+	printf("Temp:    %llu\n", Ts->GetTempUll());
+	printf("crypted: %llu\n", Ts->__Cd_np_TempUll);
 
 }

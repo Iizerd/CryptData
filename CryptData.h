@@ -103,8 +103,7 @@ template<__CD_U64 Hash_value> struct __CD_CRYPT_SHELLCODE<Hash_value, double>
 #define CD_DEFINE(__Type, __Name)																															\
 static_assert(sizeof(__Type) <= 8, "Invalid type size.");																									\
 __Type __Cd_np_##__Name;																																	\
-constexpr static __CD_U64 __Cd_np_##__Name##_hash = __CD_Hash64<#__Name>(1776)/* + __LINE__ + __TIME__[7] + __TIME__[6] + __TIME__[4]*/;					\
-__declspec(allocate(".cdata")) constexpr static auto __Cd_np_crypt_##__Name = __CD_CRYPT_SHELLCODE<__Cd_np_##__Name##_hash, __Type>::Data;					\
+__declspec(allocate(".cdata")) constexpr static auto __Cd_np_crypt_##__Name = __CD_CRYPT_SHELLCODE<__CD_Hash64<#__Name>(1776), __Type>::Data;				\
 																																							\
 __forceinline const __Type Get##__Name() const																												\
 {																																							\
