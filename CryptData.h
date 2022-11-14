@@ -7,14 +7,8 @@
 #define __CD_U32 unsigned int
 #define __CD_U64 unsigned long long
 
-
-#define __EXPAND(__X) __X
-
-#define __CD_NAME_PREFIX __Cd_np_
-
 #pragma section(".cdata") // Specifying execute,read,write here does not work, have to use linker comment
 #pragma comment(linker, "/SECTION:.cdata,ERW")
-
 
 template<typename Incomming_type, __CD_U32 String_size>
 struct __CD_STRING_LITERAL
@@ -112,91 +106,15 @@ __Type __Cd_np_##__Name;																																	\
 constexpr static __CD_U64 __Cd_np_##__Name##_hash = __CD_Hash64<#__Name>(1776)/* + __LINE__ + __TIME__[7] + __TIME__[6] + __TIME__[4]*/;					\
 __declspec(allocate(".cdata")) constexpr static auto __Cd_np_crypt_##__Name = __CD_CRYPT_SHELLCODE<__Cd_np_##__Name##_hash, __Type>::Data;					\
 																																							\
-																																							\
 __forceinline const __Type Get##__Name() const																												\
 {																																							\
-	return ((__Type(*)(__CDDS(__Type)))(__Cd_np_crypt_##__Name.data()))(__COERCE_TYPE(__Cd_np_##__Name));															\
+	return ((__Type(*)(__CDDS(__Type)))(__Cd_np_crypt_##__Name.data()))(__COERCE_TYPE(__Cd_np_##__Name));													\
 }																																							\
 __forceinline void Set##__Name(__Type __Val)																												\
 {																																							\
-	__Cd_np_##__Name = ((__Type(*)(__CDDS(__Type)))(__Cd_np_crypt_##__Name.data()))(__COERCE_TYPE(__Val));														\
+	__Cd_np_##__Name = ((__Type(*)(__CDDS(__Type)))(__Cd_np_crypt_##__Name.data()))(__COERCE_TYPE(__Val));													\
 }
 
 #define CD_MAKE_INITIALIZER(__Name, __Val)																													\
 	__Cd_np_##__Name(((decltype(__Cd_np_##__Name)(*)(__CDDS(decltype(__Cd_np_##__Name))))(&__Cd_np_crypt_##__Name))(__COERCE_TYPE(__Val)))
 
-
-//#define CD_DEFINE(__Type, __Name)																															\
-//static_assert(sizeof(__Type) <= 8, "Invalid type size.");																									\
-//__Type __Cd_np_##__Name;																																	\
-//constexpr static __CD_U64 __Cd_np_##__Name##_hash = __CD_Hash64<#__Name>(1776)/* + __LINE__ + __TIME__[7] + __TIME__[6] + __TIME__[4]*/;					\
-//__declspec(allocate(".cdata")) inline static __CD_U8 __Cd_np_crypt_##__Name[] = {																			\
-//		0x0F, 0x31,												/*rdtsc*/																					\
-//		0x48, 0x01, 0x05, 0x0B, 0x00, 0x00, 0x00,				/*add [hash],rax*/																			\
-//		0x66, 0xC7, 0x05, 0xEE, 0xFF, 0xFF, 0xFF, 0xEB, 0x10,	/*mov start, disp to past setup*/															\
-//		0x48, 0xB8, 											/*movabs rax,hash*/																			\
-//		((0xFFull << 0x0) & __Cd_np_##__Name##_hash >> 0x0),	/*hash*/																					\
-//		(((0xFFull << 0x8) & __Cd_np_##__Name##_hash) >> 0x8), 																								\
-//		(((0xFFull << 0x10) & __Cd_np_##__Name##_hash) >> 0x10), 																							\
-//		(((0xFFull << 0x18) & __Cd_np_##__Name##_hash) >> 0x18), 																							\
-//		(((0xFFull << 0x20) & __Cd_np_##__Name##_hash) >> 0x20), 																							\
-//		(((0xFFull << 0x28) & __Cd_np_##__Name##_hash) >> 0x28), 																							\
-//		(((0xFFull << 0x30) & __Cd_np_##__Name##_hash) >> 0x30), 																							\
-//		(((0xFFull << 0x38) & __Cd_np_##__Name##_hash) >> 0x38), 																							\
-//		0x48, 0x31, 0xC8, 										/*xor rax,rcx*/																				\
-//		0xC3																																				\
-//};																																							\
-//																																							\
-//																																							\
-//__forceinline const __Type Get##__Name() const																												\
-//{																																							\
-//	return ((__Type(*)(__CDDS(__Type)))(&__Cd_np_crypt_##__Name))(__COERCE_TYPE(__Cd_np_##__Name));															\
-//}																																							\
-//__forceinline void Set##__Name(__Type const __Val)																											\
-//{																																							\
-//	__Cd_np_##__Name = ((__Type(*)(__CDDS(__Type)))(&__Cd_np_crypt_##__Name))(__COERCE_TYPE(__Val));														\
-//}
-
-//OLD STUFF
-/*
-
-
-
-template<typename Data_type, __CD_U8 Data_size, __CD_U64 Crypt_hash>
-__forceinline Data_type __CD_Decrypt(Data_type Data)
-{
-	typename __CD_DATA_STORAGE<Data_size>::Type DataStorage = *(typename __CD_DATA_STORAGE<Data_size>::Type*)&Data;
-	DataStorage -= (typename __CD_DATA_STORAGE<Data_size>::Type)Crypt_hash;
-	DataStorage ^= Crypt_hash;
-	return *(Data_type*)&DataStorage;
-}
-
-template<typename Data_type, __CD_U8 Data_size, __CD_U64 Crypt_hash>
-__forceinline Data_type __CD_Encrypt(Data_type Data)
-{
-	__declspec(allocate(".cdata")) static __CD_U32 test_arr[] = { Crypt_hash & 0xFF };
-
-	test_arr[0] = 0xC3;
-	typedef void(*TestCall)();
-	TestCall tc = (TestCall)&test_arr;
-	tc();
-
-	typename __CD_DATA_STORAGE<Data_size>::Type DataStorage = *(typename __CD_DATA_STORAGE<Data_size>::Type*)&Data;
-	DataStorage ^= Crypt_hash;
-	DataStorage += (typename __CD_DATA_STORAGE<Data_size>::Type)Crypt_hash;
-	return *(Data_type*)&DataStorage;
-}
-
-__forceinline const __Type Get##__Name() const																																						\
-{																																																	\
-	return __CD_Decrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(__Cd_np_##__Name##_seed)>(__Cd_np_##__Name);																					\
-}																																																	\
-__forceinline void Set##__Name(__Type const __Val)																																					\
-{																																																	\
-	__Cd_np_##__Name = __CD_Encrypt<__Type, sizeof(__Type), __CD_Hash64<#__Name>(__Cd_np_##__Name##_seed)>(__Val);																					\
-}
-
-#define CD_MAKE_INITIALIZER(__Name, __Val)																														\
-__Cd_np_##__Name(__CD_Encrypt<decltype(__Cd_np_##__Name), sizeof(decltype(__Cd_np_##__Name)), __CD_Hash64<#__Name>(__Cd_np_##__Name##_seed)>(__Val))
-
-*/
