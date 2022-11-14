@@ -8,7 +8,7 @@
 //	CD_DEFINE(void*, Temp);
 //	
 //	TEST_STRUCT(void* startval)
-//		: CD_MAKE_INITIALIZER(Temp, startval)
+//		: CD_INIT(Temp, startval)
 //	{ }
 //};
 
@@ -17,7 +17,7 @@ struct TEST_STRUCT
 	CD_DEFINE(double, Temp);
 
 	TEST_STRUCT(double startval)
-		: CD_MAKE_INITIALIZER(Temp, startval)
+		: CD_INIT(Temp, startval)
 	{ }
 };
 

@@ -115,6 +115,6 @@ __forceinline void Set##__Name(__Type __Val)																												\
 	__Cd_np_##__Name = ((__Type(*)(__CDDS(__Type)))(__Cd_np_crypt_##__Name.data()))(__COERCE_TYPE(__Val));													\
 }
 
-#define CD_MAKE_INITIALIZER(__Name, __Val)																													\
+#define CD_INIT(__Name, __Val)																													\
 	__Cd_np_##__Name(((decltype(__Cd_np_##__Name)(*)(__CDDS(decltype(__Cd_np_##__Name))))(&__Cd_np_crypt_##__Name))(__COERCE_TYPE(__Val)))
 
