@@ -49,20 +49,20 @@ consteval __CD_U64 __CD_Hash64(const __CD_U32 Seed)
 #define CD_DEFINE(__Type, __Name)																															\
 static_assert(sizeof(__Type) <= 8, "Invalid type size.");																									\
 __Type __Cd_np_##__Name;																																	\
-constexpr static __CD_U32 __Cd_np_##__Name##_seed = __CD_Hash64<#__Name>(1776)/* + __LINE__ + __TIME__[7] + __TIME__[6] + __TIME__[4]*/;					\
+constexpr static __CD_U64 __Cd_np_##__Name##_seed = __CD_Hash64<#__Name>(1776)/* + __LINE__ + __TIME__[7] + __TIME__[6] + __TIME__[4]*/;					\
 __declspec(allocate(".cdata")) inline static __CD_U8 __Cd_np_crypt_##__Name[] = {																			\
 		0x0F, 0x31,												/*rdtsc*/																					\
 		0x48, 0x01, 0x05, 0x0B, 0x00, 0x00, 0x00,				/*add [hash],rax*/																			\
 		0x66, 0xC7, 0x05, 0xEE, 0xFF, 0xFF, 0xFF, 0xEB, 0x10,	/*mov start, disp to past setup*/															\
 		0x48, 0xB8, 																																		\
-		(((0xFFull << 0x38) & __Cd_np_##__Name##_seed) >> 0x38), 																							\
+		((0xFFull << 0x0)& __Cd_np_##__Name##_seed),																										\
+		(((0xFFull << 0x8)& __Cd_np_##__Name##_seed) >> 0x8), 																								\
+		(((0xFFull << 0x10)& __Cd_np_##__Name##_seed) >> 0x10), 																							\
+		(((0xFFull << 0x18)& __Cd_np_##__Name##_seed) >> 0x18), 																							\
+		(((0xFFull << 0x20)& __Cd_np_##__Name##_seed) >> 0x20), 																							\
+		(((0xFFull << 0x28) & __Cd_np_##__Name##_seed) >> 0x28), 																							\
 		(((0xFFull << 0x30)& __Cd_np_##__Name##_seed) >> 0x30), 																							\
 		(((0xFFull << 0x38)& __Cd_np_##__Name##_seed) >> 0x38), 																							\
-		(((0xFFull << 0x20)& __Cd_np_##__Name##_seed) >> 0x20), 																							\
-		(((0xFFull << 0x18)& __Cd_np_##__Name##_seed) >> 0x18), 																							\
-		(((0xFFull << 0x10)& __Cd_np_##__Name##_seed) >> 0x10), 																							\
-		(((0xFFull << 0x8)& __Cd_np_##__Name##_seed) >> 0x8), 																								\
-		((0xFFull << 0x0)& __Cd_np_##__Name##_seed),																										\
 		0x48, 0x31, 0xC8, 										/*xor rax,rcx*/																				\
 		0xC3																																				\
 };																																							\
