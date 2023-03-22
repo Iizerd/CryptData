@@ -1,0 +1,8 @@
+# Reference: https://build-cpp.github.io/cmkr/cmake-toml
+[project]
+name = "CryptData"
+
+[target.CryptData]
+type = "executable"
+sources = ["*.cpp", "*.h", "*.hpp"]
+compile-features = ["cxx_std_20"]
